@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Piel | Beauty Code</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Fondo salmón cálido como en tu captura */
+        body {
+            background: linear-gradient(135deg, #ffb3a1, #ffc4b8);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Estrellitas de fondo */
+        .star-bg {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.8);
+            opacity: 0.6;
+        }
+
+        /* -----------------------------------------------------
+           ANIMACIONES NATIVAS (A prueba de fallos)
+        ------------------------------------------------------ */
+        @keyframes revealMsg {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal-msg {
+            animation: revealMsg 0.5s ease-out forwards;
+        }
+
+        @keyframes revealMsgSoft {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal-msg-soft {
+            animation: revealMsgSoft 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    </style>
+</head>
+<body class="antialiased p-4 sm:p-6 text-gray-800">
+
+    <!-- Capa de estrellitas fijas en el fondo -->
+    <div id="stars-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- CONTENEDOR PRINCIPAL (La tarjeta blanca exacta de tu captura) -->
+    <div class="relative w-full max-w-[390px] h-[88vh] max-h-[820px] bg-[#fffbf9] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col z-10" id="app-container">
+        
+        <!-- ========================================== -->
+        <!-- PORTADA IDÉNTICA A TU CAPTURA DE PANTALLA -->
+        <!-- ========================================== -->
+        <div id="cover-page" class="absolute inset-0 flex flex-col items-center pt-10 px-6 pb-8 z-20 bg-[#fffbf9] transition-opacity duration-500 overflow-y-auto no-scrollbar">
+            
+            <!-- Logo Beauty Code -->
+            <div class="w-[90px] h-[90px] rounded-full overflow-hidden border-[3px] border-white shadow-[0_4px_15px_rgba(0,0,0,0.06)] bg-white flex items-center justify-center shrink-0">
+                <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
+            </div>
+            
+            <!-- Tipografía corregida a font-sans (Montserrat) CON VERIFICADOR -->
+            <div class="flex items-center justify-center mt-4 cursor-pointer hover:opacity-80 transition-opacity" onclick="showVerifiedPopup()">
+                <p class="text-[11px] font-sans font-bold tracking-[0.25em] text-[#1a1a1a] uppercase text-center">Beauty Code</p>
+                <svg class="w-[14px] h-[14px] ml-1.5 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor"><path d="M12,22C12,22 12,22 12,22C11.5,22 11,21.8 10.6,21.4L8.7,19.6C8.5,19.4 8.2,19.3 7.9,19.3L5.3,19.3C4.2,19.3 3.3,18.4 3.3,17.3L3.3,14.7C3.3,14.4 3.2,14.1 3,13.9L1.2,12C0.4,11.2 0.4,10.1 1.2,9.3L3,7.4C3.2,7.2 3.3,6.9 3.3,6.6L3.3,4C3.3,2.9 4.2,2 5.3,2L7.9,2C8.2,2 8.5,1.9 8.7,1.7L10.6,0.5C11.4,-0.2 12.6,-0.2 13.4,0.5L15.3,1.7C15.5,1.9 15.8,2 16.1,2L18.7,2C19.8,2 20.7,2.9 20.7,4L20.7,6.6C20.7,6.9 20.8,7.2 21,7.4L22.8,9.3C23.6,10.1 23.6,11.2 22.8,12L21,13.9C20.8,14.1 20.7,14.4 20.7,14.7L20.7,17.3C20.7,18.4 19.8,19.3 18.7,19.3L16.1,19.3C15.8,19.3 15.5,19.4 15.3,19.6L13.4,21.4C13,21.8 12.5,22 12,22ZM10.5,15.5L16.8,9.2L15.4,7.8L10.5,12.7L7.6,9.8L6.2,11.2L10.5,15.5Z"/></svg>
+            </div>
+
+            <!-- 5 Estrellas Negras -->
+            <div class="flex space-x-1 mt-3 text-[#1a1a1a]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-[18px] h-[18px]"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-[18px] h-[18px]"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-[18px] h-[18px]"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-[18px] h-[18px]"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-[18px] h-[18px]"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+
+            <!-- Pregunta inicial -->
+            <p class="text-center text-[12px] font-medium text-[#2a2a2a] mt-4 leading-snug px-2">
+                ¿Sientes que tus cremas y sueros faciales ya no te dan resultados?
+            </p>
+
+            <!-- Título Principal -->
+            <h1 class="font-serif text-[24px] text-[#1a1a1a] leading-[1.3] text-center mt-5">
+                Descubre tu Protocolo Clínico<br>
+                para lograr una<br>
+                <span class="italic font-bold">"Piel de Porcelana"</span><br>
+                y recuperar la firmeza de tu<br>
+                rostro.
+            </h1>
+
+            <!-- 3 Íconos Circulares -->
+            <div class="flex justify-between w-full mt-8 px-1">
+                <div class="flex flex-col items-center w-[30%]">
+                    <div class="w-[50px] h-[50px] rounded-full border border-gray-200 flex items-center justify-center mb-2 bg-white shadow-sm">
+                        <i data-lucide="sparkles" class="w-[22px] h-[22px] text-[#1a1a1a]"></i>
+                    </div>
+                    <p class="text-[8px] font-bold text-[#2a2a2a] text-center uppercase tracking-wider leading-tight">Efecto Lifting<br>Natural</p>
+                </div>
+                <div class="flex flex-col items-center w-[30%]">
+                    <div class="w-[50px] h-[50px] rounded-full border border-blue-200 flex items-center justify-center mb-2 bg-white shadow-sm">
+                        <i data-lucide="droplets" class="w-[22px] h-[22px] text-blue-500"></i>
+                    </div>
+                    <p class="text-[8px] font-bold text-[#2a2a2a] text-center uppercase tracking-wider leading-tight">Hidratación<br>Celular Profunda</p>
+                </div>
+                <div class="flex flex-col items-center w-[30%]">
+                    <div class="w-[50px] h-[50px] rounded-full border border-gray-200 flex items-center justify-center mb-2 bg-white shadow-sm">
+                        <i data-lucide="clock" class="w-[22px] h-[22px] text-[#1a1a1a]"></i>
+                    </div>
+                    <p class="text-[8px] font-bold text-[#2a2a2a] text-center uppercase tracking-wider leading-tight">Resultados en<br>5 semanas</p>
+                </div>
+            </div>
+
+            <!-- Texto descriptivo final -->
+            <p class="text-center text-[11px] text-[#2a2a2a] font-medium leading-relaxed mt-8 px-1">
+                Realiza este Test de Diagnóstico Express de 60 segundos y descubre el secreto de la medicina regenerativa exacta para tu tipo de piel.
+            </p>
+
+            <div class="flex-grow min-h-[20px]"></div>
+
+            <!-- Botón Blanco de inicio -->
+            <button onclick="startChat()" class="w-full bg-white text-[#1a1a1a] font-bold py-[16px] rounded-full shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center justify-center gap-2 mt-4 active:scale-95 transition-transform border border-gray-100 shrink-0">
+                <span class="text-[13.5px]">Iniciar mi Diagnóstico Gratuito</span>
+                <span class="text-lg">👉</span>
+            </button>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- INTERFAZ DEL CHATBOT -->
+        <!-- ========================================== -->
+        <div id="chat-interface" class="absolute inset-0 flex flex-col h-full z-10 opacity-0 pointer-events-none transition-all duration-700 bg-[#fffbf9]">
+            
+            <div class="p-4 border-b border-gray-100 bg-white/95 backdrop-blur-md flex items-center justify-between z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <div class="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center overflow-hidden shadow-sm">
+                            <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div>
+                        <!-- Tipografía corregida a font-sans CON VERIFICADOR -->
+                        <div class="flex items-center cursor-pointer hover:opacity-80 transition-opacity" onclick="showVerifiedPopup()">
+                            <h3 class="font-sans font-bold text-gray-900 text-[16px] leading-none">Beauty Code</h3>
+                            <svg class="w-[14px] h-[14px] ml-1 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor"><path d="M12,22C12,22 12,22 12,22C11.5,22 11,21.8 10.6,21.4L8.7,19.6C8.5,19.4 8.2,19.3 7.9,19.3L5.3,19.3C4.2,19.3 3.3,18.4 3.3,17.3L3.3,14.7C3.3,14.4 3.2,14.1 3,13.9L1.2,12C0.4,11.2 0.4,10.1 1.2,9.3L3,7.4C3.2,7.2 3.3,6.9 3.3,6.6L3.3,4C3.3,2.9 4.2,2 5.3,2L7.9,2C8.2,2 8.5,1.9 8.7,1.7L10.6,0.5C11.4,-0.2 12.6,-0.2 13.4,0.5L15.3,1.7C15.5,1.9 15.8,2 16.1,2L18.7,2C19.8,2 20.7,2.9 20.7,4L20.7,6.6C20.7,6.9 20.8,7.2 21,7.4L22.8,9.3C23.6,10.1 23.6,11.2 22.8,12L21,13.9C20.8,14.1 20.7,14.4 20.7,14.7L20.7,17.3C20.7,18.4 19.8,19.3 18.7,19.3L16.1,19.3C15.8,19.3 15.5,19.4 15.3,19.6L13.4,21.4C13,21.8 12.5,22 12,22ZM10.5,15.5L16.8,9.2L15.4,7.8L10.5,12.7L7.6,9.8L6.2,11.2L10.5,15.5Z"/></svg>
+                        </div>
+                        <p class="text-[10px] text-gray-500 font-medium mt-1" id="bot-status">En línea</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar flex flex-col pb-10" id="chat-messages">
+                <div class="text-center text-[10px] font-semibold text-gray-400 my-2 uppercase tracking-widest">Hoy</div>
+            </div>
+            
+            <div class="h-4 bg-transparent shrink-0"></div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ZONA DE RESULTADOS SECCIONADA (TRIAJE) -->
+        <!-- ========================================== -->
+        <!-- Cambiado a flex-col con overflow-hidden para usar Header Fijo y Contenido Scrollable -->
+        <div id="results-page" class="absolute inset-0 flex flex-col z-30 bg-[#fffbf9] transition-all duration-700 opacity-0 pointer-events-none translate-y-10 overflow-hidden">
+            
+            <!-- HEADER FIJO: Tarjeta Superior y Menú -->
+            <div class="pt-6 px-5 pb-3 bg-[#fffbf9] z-40 shrink-0 w-full relative shadow-[0_8px_15px_-10px_rgba(0,0,0,0.06)]">
+                <!-- 1. Tarjeta Elegante de Marca Superior -->
+                <div class="bg-white w-full rounded-2xl shadow-[0_4px_15px_rgba(0,0,0,0.03)] border border-gray-100 p-4 flex flex-col items-center shrink-0 mb-4 relative overflow-hidden">
+                    <!-- Decoración sutil -->
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-salmon-50 rounded-full blur-xl opacity-70 pointer-events-none"></div>
+                    <div class="w-16 h-16 rounded-full overflow-hidden border-[2px] border-white shadow-sm bg-white flex items-center justify-center mb-2 relative z-10">
+                        <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity relative z-10" onclick="showVerifiedPopup()">
+                        <h3 class="font-sans font-bold text-gray-900 text-[15px] leading-none">Beauty Code</h3>
+                        <svg class="w-[14px] h-[14px] ml-1.5 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor"><path d="M12,22C12,22 12,22 12,22C11.5,22 11,21.8 10.6,21.4L8.7,19.6C8.5,19.4 8.2,19.3 7.9,19.3L5.3,19.3C4.2,19.3 3.3,18.4 3.3,17.3L3.3,14.7C3.3,14.4 3.2,14.1 3,13.9L1.2,12C0.4,11.2 0.4,10.1 1.2,9.3L3,7.4C3.2,7.2 3.3,6.9 3.3,6.6L3.3,4C3.3,2.9 4.2,2 5.3,2L7.9,2C8.2,2 8.5,1.9 8.7,1.7L10.6,0.5C11.4,-0.2 12.6,-0.2 13.4,0.5L15.3,1.7C15.5,1.9 15.8,2 16.1,2L18.7,2C19.8,2 20.7,2.9 20.7,4L20.7,6.6C20.7,6.9 20.8,7.2 21,7.4L22.8,9.3C23.6,10.1 23.6,11.2 22.8,12L21,13.9C20.8,14.1 20.7,14.4 20.7,14.7L20.7,17.3C20.7,18.4 19.8,19.3 18.7,19.3L16.1,19.3C15.8,19.3 15.5,19.4 15.3,19.6L13.4,21.4C13,21.8 12.5,22 12,22ZM10.5,15.5L16.8,9.2L15.4,7.8L10.5,12.7L7.6,9.8L6.2,11.2L10.5,15.5Z"/></svg>
+                    </div>
+                </div>
+
+                <!-- 2. Menú Navegación Interactiva -->
+                <div class="flex w-full gap-2 shrink-0 overflow-x-auto no-scrollbar snap-x">
+                    <button onclick="scrollToSection('seccion-resultado')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-200">
+                        <span class="text-[10px] font-bold text-gray-800 tracking-wide whitespace-nowrap">🔍 1. Mi Resultado</span>
+                    </button>
+                    <button onclick="scrollToSection('seccion-tip')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-200">
+                        <span class="text-[10px] font-bold text-gray-800 tracking-wide whitespace-nowrap">💡 2. Tip de Alivio</span>
+                    </button>
+                    <button onclick="scrollToSection('seccion-pase')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-200">
+                        <span class="text-[10px] font-bold text-gray-800 tracking-wide whitespace-nowrap">📅 3. Mi Pase Gratuito</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTENIDO CON SCROLL (Zonas de Información) -->
+            <div id="results-content" class="flex-1 overflow-y-auto px-5 pb-8 no-scrollbar w-full relative pt-4">
+
+                <!-- ZONA 1: Resultado -->
+                <div id="seccion-resultado" class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 border border-gray-100 w-full mb-3 shrink-0">
+                    <h2 class="text-[13px] font-bold text-gray-900 text-center mb-3 flex items-center justify-center gap-1.5 leading-tight">
+                        🔍 RESULTADOS DE TU DIAGNÓSTICO FACIAL PERSONALIZADO:
+                    </h2>
+                    
+                    <div class="bg-red-50 text-red-600 text-[11px] font-bold uppercase tracking-wider py-2 px-3 rounded-lg text-center mb-4">
+                        Nivel de daño detectado: Profundo<br><span class="text-[9px] font-medium tracking-normal normal-case opacity-90">(Requiere atención a nivel celular)</span>
+                    </div>
+                    
+                    <p class="text-[13px] text-gray-700 leading-relaxed font-medium text-justify">
+                        Hola. Hemos procesado tus respuestas.<br><br>
+                        Dado que nos indicaste que las cremas y sueros actuales ya no te dan resultados y que tu piel se siente con pérdida de firmeza o líneas marcadas, es evidente médicamente que el desgaste ha superado la capa superficial (epidermis).
+                    </p>
+                </div>
+
+                <!-- ZONA 2: Tip de Alivio -->
+                <div id="seccion-tip" class="bg-[#f0f9ff] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-5 border border-blue-100 w-full mb-3 shrink-0">
+                    <h3 class="text-blue-600 text-[12.5px] font-bold flex items-center gap-1.5 mb-2 uppercase tracking-wide">
+                        <i data-lucide="lightbulb" class="w-[14px] h-[14px]"></i> Tu Indicación Inmediata (Tip de Alivio)
+                    </h3>
+                    <p class="text-[12.5px] text-gray-800 leading-relaxed text-justify">
+                        A partir de hoy, suspende cualquier exfoliante agresivo o jabón astringente. Enfócate únicamente en hidratación suave y protector solar estricto para evitar que la barrera cutánea se siga rompiendo.
+                    </p>
+                </div>
+
+                <!-- ZONA 3: Mapa / Pase Gratuito -->
+                <div id="seccion-pase" class="bg-[#fff5f2] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 border border-[#ffe8e0] w-full mb-6 shrink-0 relative overflow-hidden">
+                    <!-- Decoración -->
+                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-salmon-200 rounded-full blur-2xl opacity-40 pointer-events-none"></div>
+                    
+                    <h3 class="text-[#fc7660] text-[12.5px] font-bold flex items-center gap-1.5 mb-2 uppercase tracking-wide relative z-10">
+                        <i data-lucide="map-pin" class="w-[14px] h-[14px]"></i> Tu Siguiente Paso Clínico (El Mapa)
+                    </h3>
+                    <p class="text-[12.5px] text-gray-800 leading-relaxed text-justify relative z-10">
+                        Para revertir este nivel de daño, las rutinas caseras ya no son suficientes; necesitas un mapa de acción clínico exacto.<br><br>
+                        Al haber completado este perfilamiento, se te ha asignado un pase directo para una <b class="text-[#1a1a1a]">Sesión de Valoración Clínica 100% Gratuita</b> en nuestras instalaciones. En esta sesión, la Dra. Chantal evaluará tu rostro en vivo y te entregará el mapa paso a paso de lo que tu piel necesita para regenerarse desde adentro.
+                    </p>
+                </div>
+
+                <!-- Botón de WhatsApp Final Actualizado -->
+                <a href="https://wa.me/525626790531?text=Hola.%20Acabo%20de%20completar%20mi%20Triaje%20Digital%20y%20el%20sistema%20me%20asign%C3%B3%20un%20pase%20directo%20para%20evaluar%20mi%20piel%20a%20nivel%20celular.%20Me%20gustar%C3%ADa%20agendar%20mi%20Sesi%C3%B3n%20de%20Valoraci%C3%B3n%20Cl%C3%ADnica%20Gratuita.%20Mi%20nombre%20es%3A%20" 
+                   target="_blank" 
+                   class="w-full bg-[#25D366] hover:bg-[#1ebd5c] text-white font-bold py-[18px] px-4 rounded-[2rem] shadow-[0_8px_20px_rgba(37,211,102,0.3)] flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform border border-[#1ebd5c] shrink-0 mt-2">
+                    <span class="text-[12.5px] text-center leading-tight tracking-wide">CONFIRMAR MI SESIÓN DE<br>DIAGNÓSTICO EN CLÍNICA</span>
+                </a>
+                
+                <!-- Texto inferior -->
+                <p class="text-[10px] text-gray-500 text-center mt-4 px-2 leading-relaxed shrink-0">
+                    (Al hacer clic, nuestro sistema te enviará a WhatsApp para elegir el día y la hora de tu visita, sin ningún compromiso).
+                </p>
+                
+                <!-- Espacio extra al final para asegurar un scroll cómodo en móviles -->
+                <div class="h-12 w-full shrink-0"></div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- MODAL DE VERIFICACIÓN META -->
+        <!-- ========================================== -->
+        <div id="verified-modal" class="absolute inset-0 z-[100] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <!-- Overlay oscuro -->
+            <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]" onclick="closeVerifiedPopup()"></div>
+            
+            <!-- Tarjeta del modal -->
+            <div class="relative bg-white w-full sm:w-[85%] p-6 pt-5 rounded-t-3xl sm:rounded-3xl shadow-2xl transform translate-y-full sm:translate-y-0 transition-transform duration-300 ease-out" id="verified-card">
+                
+                <!-- Barra de arrastre (Mobile) -->
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-5 sm:hidden"></div>
+                
+                <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-5 h-5 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor"><path d="M12,22C12,22 12,22 12,22C11.5,22 11,21.8 10.6,21.4L8.7,19.6C8.5,19.4 8.2,19.3 7.9,19.3L5.3,19.3C4.2,19.3 3.3,18.4 3.3,17.3L3.3,14.7C3.3,14.4 3.2,14.1 3,13.9L1.2,12C0.4,11.2 0.4,10.1 1.2,9.3L3,7.4C3.2,7.2 3.3,6.9 3.3,6.6L3.3,4C3.3,2.9 4.2,2 5.3,2L7.9,2C8.2,2 8.5,1.9 8.7,1.7L10.6,0.5C11.4,-0.2 12.6,-0.2 13.4,0.5L15.3,1.7C15.5,1.9 15.8,2 16.1,2L18.7,2C19.8,2 20.7,2.9 20.7,4L20.7,6.6C20.7,6.9 20.8,7.2 21,7.4L22.8,9.3C23.6,10.1 23.6,11.2 22.8,12L21,13.9C20.8,14.1 20.7,14.4 20.7,14.7L20.7,17.3C20.7,18.4 19.8,19.3 18.7,19.3L16.1,19.3C15.8,19.3 15.5,19.4 15.3,19.6L13.4,21.4C13,21.8 12.5,22 12,22ZM10.5,15.5L16.8,9.2L15.4,7.8L10.5,12.7L7.6,9.8L6.2,11.2L10.5,15.5Z"/></svg>
+                    <h3 class="text-gray-900 font-bold text-[15px]">Cuenta de Empresa Oficial</h3>
+                </div>
+                
+                <p class="text-gray-600 text-[13px] leading-relaxed mb-6 font-medium">
+                    Meta ha verificado que esta cuenta pertenece a una clínica legítima. Tus interacciones están protegidas.
+                </p>
+                
+                <button onclick="closeVerifiedPopup()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3.5 rounded-xl transition-colors text-[13px]">
+                    Entendido
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. SCROLL DEL MENÚ INTERACTIVO (CARRUSEL) CON HEADER FIJO
+        function scrollToSection(sectionId) {
+            const scrollContainer = document.getElementById('results-content');
+            const sectionElement = document.getElementById(sectionId);
+            
+            if (scrollContainer && sectionElement) {
+                // Al tener un header fijo independiente, el offsetTop de la sección 
+                // dentro del contenedor con scroll es directo. Le restamos un margen visual (15px).
+                scrollContainer.scrollTo({
+                    top: sectionElement.offsetTop - 15,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Lógica del Pop-up de Verificación
+        function showVerifiedPopup() {
+            const modal = document.getElementById('verified-modal');
+            const card = document.getElementById('verified-card');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            card.classList.remove('translate-y-full');
+            card.classList.add('translate-y-0');
+        }
+
+        function closeVerifiedPopup() {
+            const modal = document.getElementById('verified-modal');
+            const card = document.getElementById('verified-card');
+            card.classList.remove('translate-y-0');
+            card.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }, 300);
+        }
+
+        // Estrellas sutiles de fondo
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            for (let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star-bg');
+                star.style.width = `${Math.random() * 2 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.animationDelay = `${-Math.random() * 5}s`;
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+
+        // --- EL CUESTIONARIO EXACTO DE 5 PREGUNTAS ---
+        const quizData = [
+            {
+                question: "1. Para brindarte un diagnóstico preciso y saber si podemos atenderte en nuestras instalaciones, ¿desde dónde nos contactas?",
+                options: [
+                    "A) Ciudad de México (CDMX) o Área Metropolitana.",
+                    "B) Otro Estado de la República.",
+                    "C) Fuera de México."
+                ]
+            },
+            {
+                question: "2. Para empezar, ¿cómo sientes tu piel al final del día frente al espejo?",
+                options: [
+                    "A) Apagada, reseca y a veces enrojecida o muy sensible.",
+                    "B) Cansada, como si hubiera perdido su soporte natural (con flacidez).",
+                    "C) Frágil, delgada y con las líneas de expresión muy marcadas."
+                ]
+            },
+            {
+                question: "3. Si pudieras borrar un detalle de tu rostro de forma definitiva, ¿cuál elegirías?",
+                options: [
+                    "A) Las manchas y el tono disparejo.",
+                    "B) Las cicatrices (como las de acné) y la textura irregular.",
+                    "C) Disminuir los surcos nasogenianos y las líneas de expresión."
+                ]
+            },
+            {
+                question: "4. Seamos honestas, ¿sientes que las cremas y sueros que usas en casa se quedan 'cortos' y ya no te dan resultados reales?",
+                options: [
+                    "A) Sí, gasto dinero en cremas pero mi piel sigue igual.",
+                    "B) Siento que solo hidratan por encima, pero no reparan el daño profundo.",
+                    "C) Totalmente, he llegado a un punto donde necesito algo mucho más potente."
+                ]
+            },
+            {
+                question: "5. Si existiera un tratamiento clínico avanzado para regenerar tus células, ¿qué preferirías lograr en tu rostro?",
+                options: [
+                    "A) \"Glass Skin\" (Piel de cristal): Textura de porcelana, permanente y sin enrojecimiento.",
+                    "B) Un efecto lifting natural que me devuelva la firmeza y juventud.",
+                    "C) Reestructurar mi piel desde adentro para que luzca resistente y luminosa."
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        function startChat() {
+            const coverPage = document.getElementById('cover-page');
+            const chatInterface = document.getElementById('chat-interface');
+            
+            coverPage.style.opacity = '0';
+            coverPage.style.pointerEvents = 'none';
+            coverPage.style.zIndex = '0';
+            
+            setTimeout(() => {
+                chatInterface.style.opacity = '1';
+                chatInterface.style.pointerEvents = 'auto';
+                chatInterface.style.zIndex = '20';
+                
+                // Mensaje con la palabra "hermosa" reincorporada
+                addGreetingMessage("¡Hola, hermosa! 👋 Bienvenida a tu experiencia personalizada.", 500);
+                addGreetingMessage("Hoy exploraremos juntas cómo la biotecnología del <b>ADN de Salmón</b> y los <b>Exosomas</b> pueden revelar la mejor versión de tu piel. ✨", 2500);
+                
+                setTimeout(() => {
+                    askQuestion(currentQuestionIndex);
+                }, 5500);
+
+            }, 500);
+        }
+
+        // INDICADOR DE "Escribiendo..."
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chat-messages');
+            document.getElementById('bot-status').innerText = "escribiendo...";
+            const typingDiv = document.createElement('div');
+            typingDiv.id = "typing-indicator";
+            // Usa clase nativa reveal-msg
+            typingDiv.className = "flex items-end space-x-2 w-full max-w-[85%] reveal-msg";
+            typingDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0 border border-gray-200 overflow-hidden">
+                    <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
+                </div>
+                <div class="bg-white p-3.5 rounded-2xl rounded-bl-none shadow-sm flex space-x-1.5 border border-gray-100">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+            return typingDiv;
+        }
+
+        function removeTypingIndicator() {
+            document.getElementById('bot-status').innerText = "En línea";
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        // BURBUJA DE LA CLÍNICA
+        function addGreetingMessage(text, delay) {
+            setTimeout(() => {
+                showTypingIndicator();
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    const chatMessages = document.getElementById('chat-messages');
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = "flex items-end space-x-2 w-full max-w-[92%] reveal-msg";
+                    msgDiv.innerHTML = `
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0 z-10 border border-gray-200 overflow-hidden">
+                            <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm text-[13.5px] text-[#1a1a1a] border border-gray-100 leading-relaxed">
+                            ${text}
+                        </div>
+                    `;
+                    chatMessages.appendChild(msgDiv);
+                    scrollToBottom();
+                }, 1500); 
+            }, delay);
+        }
+
+        // BURBUJA DE PREGUNTA
+        function addQuestionMessage(text) {
+            const chatMessages = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "flex items-end space-x-2 w-full max-w-[95%] reveal-msg mt-4";
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center flex-shrink-0 z-10 border border-gray-200 shadow-sm overflow-hidden">
+                    <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
+                </div>
+                <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm text-[14px] font-semibold text-[#1a1a1a] border border-gray-100 leading-relaxed">
+                    ${text}
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+        }
+
+        // BURBUJA DEL USUARIO (Gris Carbón)
+        function addUserMessage(text) {
+            const chatMessages = document.getElementById('chat-messages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "flex items-end justify-end space-x-2 w-full reveal-msg mt-2";
+            msgDiv.innerHTML = `
+                <div class="bg-[#1a1a1a] p-4 rounded-2xl rounded-br-none shadow-md text-[13px] font-medium text-white max-w-[85%] leading-relaxed border border-gray-800">
+                    ${text}
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function askQuestion(index) {
+            if (index >= quizData.length) return;
+
+            const qData = quizData[index];
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                removeTypingIndicator();
+                addQuestionMessage(qData.question);
+                scrollToBottom();
+
+                setTimeout(() => {
+                    renderInlineOptions(qData.options, index);
+                }, 800);
+            }, 1800);
+        }
+
+        // OPCIONES DE RESPUESTA ESCALONADAS
+        function renderInlineOptions(options, questionId) {
+            const chatMessages = document.getElementById('chat-messages');
+            const optionsContainerDiv = document.createElement('div');
+            optionsContainerDiv.id = `options-group-${questionId}`;
+            optionsContainerDiv.className = "flex flex-col ml-10 space-y-2.5 w-full max-w-[85%]";
+            
+            options.forEach((opt, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-white text-left hover:bg-gray-50 border border-gray-200 text-[#2a2a2a] text-[13px] py-3.5 px-4 rounded-xl transition-all shadow-sm flex items-center justify-between group reveal-msg-soft";
+                
+                const delay = optIndex * 0.35;
+                btn.style.animationDelay = `${delay}s`;
+                
+                btn.innerHTML = `
+                    <span class="pr-3 leading-snug">${opt}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 group-hover:text-gray-600 transition-colors shrink-0"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                `;
+                btn.onclick = () => handleOptionClick(opt, questionId);
+                optionsContainerDiv.appendChild(btn);
+            });
+
+            const waitingText = document.createElement('div');
+            const totalDelayForWaitingText = options.length * 0.35 + 0.2; 
+            
+            waitingText.className = "mt-4 ml-1 flex items-center reveal-msg-soft";
+            waitingText.style.animationDelay = `${totalDelayForWaitingText}s`;
+            waitingText.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#ff7d5c] mr-2 animate-bounce"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 4v7a4 4 0 0 0 4 4h12"></path></svg>
+                <span class="text-[10px] font-bold uppercase tracking-wide text-[#ff7d5c] opacity-80">En espera de tu respuesta...</span>
+            `;
+            
+            optionsContainerDiv.appendChild(waitingText);
+            chatMessages.appendChild(optionsContainerDiv);
+            
+            scrollToBottom();
+        }
+
+        // --- TRANSICIÓN GARANTIZADA Y RÁPIDA A RESULTADOS ---
+        function showResultsPage() {
+            const chatInterface = document.getElementById('chat-interface');
+            const resultsPage = document.getElementById('results-page');
+            
+            // Difuminar el chat
+            chatInterface.style.opacity = '0';
+            chatInterface.style.transform = 'scale(0.95)';
+            chatInterface.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                resultsPage.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-10');
+                resultsPage.style.opacity = '1';
+                resultsPage.style.transform = 'translateY(0)';
+                resultsPage.style.pointerEvents = 'auto';
+                resultsPage.style.zIndex = '50';
+                
+                lucide.createIcons();
+            }, 400); 
+        }
+
+        // --- LÓGICA DE RESPUESTAS Y RUTEO ---
+        function handleOptionClick(selectedText, questionId) {
+            const optionsContainerDiv = document.getElementById(`options-group-${questionId}`);
+            if (optionsContainerDiv) {
+                optionsContainerDiv.style.opacity = '0';
+                optionsContainerDiv.style.transform = 'translateY(-10px)';
+                optionsContainerDiv.style.transition = 'all 0.3s ease';
+                setTimeout(() => optionsContainerDiv.remove(), 300);
+            }
+            
+            setTimeout(() => {
+                addUserMessage(selectedText);
+                userAnswers.push(selectedText);
+
+                // FILTRO 1: Ubicación
+                if (questionId === 0) {
+                    if (selectedText.includes("B)") || selectedText.includes("C)")) {
+                        setTimeout(() => disqualifyLead('location'), 800);
+                        return; 
+                    }
+                }
+
+                // NUEVA ZONA: Triaje Digital al responder la última pregunta (índice 4)
+                if (questionId === 4) {
+                    showTypingIndicator();
+                    setTimeout(() => {
+                        removeTypingIndicator();
+                        addGreetingMessage("¡Perfecto! Hemos procesado tus respuestas. 🌸", 0);
+                        
+                        setTimeout(() => {
+                            showResultsPage();
+                        }, 3500);
+                    }, 500);
+                    return; 
+                }
+
+                currentQuestionIndex++;
+                setTimeout(() => askQuestion(currentQuestionIndex), 800);
+
+            }, 350);
+        }
+
+        function disqualifyLead(reason) {
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                if (reason === 'location') {
+                    // Mensaje con la palabra "hermosa" reincorporada
+                    addGreetingMessage("Gracias por tu interés, hermosa. 🌸 Por la naturaleza de nuestros tratamientos clínicos, el protocolo de Medicina Regenerativa es exclusivamente presencial en nuestras instalaciones de CDMX y Área Metropolitana.", 0);
+                    addGreetingMessage("Esperamos poder atenderte en el futuro si tienes oportunidad de visitarnos. ¡Que tengas un excelente día! ✨", 2500);
+                } 
+            }, 1500);
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                const cm = document.getElementById('chat-messages');
+                if (cm) cm.scrollTo({ top: cm.scrollHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
