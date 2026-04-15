@@ -1,20 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta property="og:title" content="Recupera la Firmeza">
-<meta property="og:description" content="Escribe aquí una descripción breve y persuasiva para tu prospecto.">
-<meta property="og:image" content="https://robertfibonacci.github.io/Recupera-la-Firmeza/Desgaste.png">
-<meta property="og:url" content="https://robertfibonacci.github.io/Recupera-la-Firmeza/">
-<meta property="og:type" content="website">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Recupera la Firmeza">
-<meta name="twitter:description" content="Escribe aquí una descripción breve y persuasiva para tu prospecto.">
-<meta name="twitter:image" content="https://robertfibonacci.github.io/Recupera-la-Firmeza/Desgaste.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Título de la pestaña -->
     <title>Análisis de Piel | Beauty Code</title>
     
+    <!-- ========================================== -->
+    <!-- METADATOS PARA REDES SOCIALES Y WHATSAPP -->
+    <!-- ========================================== -->
+    <meta name="description" content="Descubre por qué tus cremas actuales ya no eliminan la flacidez. El secreto médico para lograr una 'Piel de Cristal' desde adentro es...">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://robertfibonacci.github.io/Recupera-la-Firmeza/">
+    <meta property="og:title" content="Análisis de Piel | Beauty Code">
+    <meta property="og:description" content="Descubre por qué tus cremas actuales ya no eliminan la flacidez. El secreto médico para lograr una 'Piel de Cristal' desde adentro es...">
+    <meta property="og:image" content="https://raw.githubusercontent.com/RobertFibonacci/Recupera-la-Firmeza/main/Desgaste.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://robertfibonacci.github.io/Recupera-la-Firmeza/">
+    <meta property="twitter:title" content="Análisis de Piel | Beauty Code">
+    <meta property="twitter:description" content="Descubre por qué tus cremas actuales ya no eliminan la flacidez. El secreto médico para lograr una 'Piel de Cristal' desde adentro es...">
+    <meta property="twitter:image" content="https://raw.githubusercontent.com/RobertFibonacci/Recupera-la-Firmeza/main/Desgaste.png">
+    <!-- ========================================== -->
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -38,11 +50,12 @@
     </script>
 
     <style>
-        /* Fondo salmón cálido como en tu captura */
+        /* Fondo salmón cálido con ajuste dinámico DVH para celulares */
         body {
             background: linear-gradient(135deg, #ffb3a1, #ffc4b8);
             margin: 0;
             height: 100vh;
+            height: 100dvh; /* Asegura que la barra del celular no corte el contenido */
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -100,8 +113,8 @@
     <!-- Capa de estrellitas fijas en el fondo -->
     <div id="stars-container" class="fixed inset-0 pointer-events-none z-0"></div>
 
-    <!-- CONTENEDOR PRINCIPAL (La tarjeta blanca exacta de tu captura) -->
-    <div class="relative w-full max-w-[390px] h-[88vh] max-h-[820px] bg-[#fffbf9] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col z-10" id="app-container">
+    <!-- CONTENEDOR PRINCIPAL (Altura dinámica para no descuadrarse en móvil) -->
+    <div class="relative w-full max-w-[390px] bg-[#fffbf9] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col z-10" style="height: 88vh; height: 88dvh; max-height: 820px;" id="app-container">
         
         <!-- ========================================== -->
         <!-- PORTADA IDÉNTICA A TU CAPTURA DE PANTALLA -->
@@ -176,6 +189,9 @@
                 <span class="text-[13.5px]">Iniciar mi Diagnóstico Gratuito</span>
                 <span class="text-lg">👉</span>
             </button>
+            
+            <!-- Espacio final para asegurar que el botón nunca quede pegado al borde del celular -->
+            <div class="h-8 shrink-0 w-full"></div>
         </div>
 
         <!-- ========================================== -->
@@ -183,7 +199,7 @@
         <!-- ========================================== -->
         <div id="chat-interface" class="absolute inset-0 flex flex-col h-full z-10 opacity-0 pointer-events-none transition-all duration-700 bg-[#fffbf9]">
             
-            <div class="p-4 border-b border-gray-100 bg-white/95 backdrop-blur-md flex items-center justify-between z-10">
+            <div class="p-4 border-b border-gray-100 bg-white/95 backdrop-blur-md flex items-center justify-between z-10 shrink-0">
                 <div class="flex items-center space-x-3">
                     <div class="relative">
                         <div class="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center overflow-hidden shadow-sm">
@@ -202,26 +218,23 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar flex flex-col pb-10" id="chat-messages">
-                <div class="text-center text-[10px] font-semibold text-gray-400 my-2 uppercase tracking-widest">Hoy</div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-5 no-scrollbar flex flex-col pb-16" id="chat-messages">
+                <div class="text-center text-[10px] font-semibold text-gray-400 my-2 uppercase tracking-widest shrink-0">Hoy</div>
             </div>
-            
-            <div class="h-4 bg-transparent shrink-0"></div>
 
         </div>
 
         <!-- ========================================== -->
         <!-- ZONA DE RESULTADOS SECCIONADA (TRIAJE) -->
         <!-- ========================================== -->
-        <!-- Cambiado a flex-col con overflow-hidden para usar Header Fijo y Contenido Scrollable -->
+        <!-- Contenedor general en layout Flexbox con contenido scrolleable -->
         <div id="results-page" class="absolute inset-0 flex flex-col z-30 bg-[#fffbf9] transition-all duration-700 opacity-0 pointer-events-none translate-y-10 overflow-hidden">
             
             <!-- HEADER FIJO: Tarjeta Superior y Menú -->
             <div class="pt-6 px-5 pb-3 bg-[#fffbf9] z-40 shrink-0 w-full relative shadow-[0_8px_15px_-10px_rgba(0,0,0,0.06)]">
                 <!-- 1. Tarjeta Elegante de Marca Superior -->
                 <div class="bg-white w-full rounded-2xl shadow-[0_4px_15px_rgba(0,0,0,0.03)] border border-gray-100 p-4 flex flex-col items-center shrink-0 mb-4 relative overflow-hidden">
-                    <!-- Decoración sutil -->
-                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-salmon-50 rounded-full blur-xl opacity-70 pointer-events-none"></div>
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-[#ffb3a1] rounded-full blur-xl opacity-30 pointer-events-none"></div>
                     <div class="w-16 h-16 rounded-full overflow-hidden border-[2px] border-white shadow-sm bg-white flex items-center justify-center mb-2 relative z-10">
                         <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
                     </div>
@@ -233,13 +246,13 @@
 
                 <!-- 2. Menú Navegación Interactiva -->
                 <div class="flex w-full gap-2 shrink-0 overflow-x-auto no-scrollbar snap-x">
-                    <button onclick="scrollToSection('seccion-resultado')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-200">
+                    <button onclick="scrollToSection('seccion-resultado')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none">
                         <span class="text-[10px] font-bold text-gray-800 tracking-wide whitespace-nowrap">🔍 1. Mi Resultado</span>
                     </button>
-                    <button onclick="scrollToSection('seccion-tip')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-200">
+                    <button onclick="scrollToSection('seccion-tip')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none">
                         <span class="text-[10px] font-bold text-gray-800 tracking-wide whitespace-nowrap">💡 2. Tip de Alivio</span>
                     </button>
-                    <button onclick="scrollToSection('seccion-pase')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-200">
+                    <button onclick="scrollToSection('seccion-pase')" class="snap-start bg-white border border-gray-200 hover:border-gray-400 active:bg-gray-50 shadow-sm rounded-xl px-3 py-2 flex items-center justify-center shrink-0 transition-colors cursor-pointer focus:outline-none">
                         <span class="text-[10px] font-bold text-gray-800 tracking-wide whitespace-nowrap">📅 3. Mi Pase Gratuito</span>
                     </button>
                 </div>
@@ -250,7 +263,7 @@
 
                 <!-- ZONA 1: Resultado -->
                 <div id="seccion-resultado" class="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 border border-gray-100 w-full mb-3 shrink-0">
-                    <h2 class="text-[13px] font-bold text-gray-900 text-center mb-3 flex items-center justify-center gap-1.5 leading-tight">
+                    <h2 class="text-[13.5px] font-bold text-gray-900 text-center mb-3 flex items-center justify-center gap-1.5 leading-tight">
                         🔍 RESULTADOS DE TU DIAGNÓSTICO FACIAL PERSONALIZADO:
                     </h2>
                     
@@ -276,8 +289,7 @@
 
                 <!-- ZONA 3: Mapa / Pase Gratuito -->
                 <div id="seccion-pase" class="bg-[#fff5f2] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 border border-[#ffe8e0] w-full mb-6 shrink-0 relative overflow-hidden">
-                    <!-- Decoración -->
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-salmon-200 rounded-full blur-2xl opacity-40 pointer-events-none"></div>
+                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-[#ffb3a1] rounded-full blur-2xl opacity-40 pointer-events-none"></div>
                     
                     <h3 class="text-[#fc7660] text-[12.5px] font-bold flex items-center gap-1.5 mb-2 uppercase tracking-wide relative z-10">
                         <i data-lucide="map-pin" class="w-[14px] h-[14px]"></i> Tu Siguiente Paso Clínico (El Mapa)
@@ -300,8 +312,8 @@
                     (Al hacer clic, nuestro sistema te enviará a WhatsApp para elegir el día y la hora de tu visita, sin ningún compromiso).
                 </p>
                 
-                <!-- Espacio extra al final para asegurar un scroll cómodo en móviles -->
-                <div class="h-12 w-full shrink-0"></div>
+                <!-- ESPACIO EXTRA PARA ASEGURAR SCROLL COMPLETO EN MÓVILES -->
+                <div class="h-24 w-full shrink-0"></div>
             </div>
         </div>
 
@@ -323,7 +335,7 @@
                     <h3 class="text-gray-900 font-bold text-[15px]">Cuenta de Empresa Oficial</h3>
                 </div>
                 
-                <p class="text-gray-600 text-[13px] leading-relaxed mb-6 font-medium">
+                <p class="text-gray-600 text-[13px] leading-relaxed mb-6 font-medium text-justify">
                     Meta ha verificado que esta cuenta pertenece a una clínica legítima. Tus interacciones están protegidas.
                 </p>
                 
@@ -344,8 +356,6 @@
             const sectionElement = document.getElementById(sectionId);
             
             if (scrollContainer && sectionElement) {
-                // Al tener un header fijo independiente, el offsetTop de la sección 
-                // dentro del contenedor con scroll es directo. Le restamos un margen visual (15px).
                 scrollContainer.scrollTo({
                     top: sectionElement.offsetTop - 15,
                     behavior: 'smooth'
@@ -466,7 +476,6 @@
             document.getElementById('bot-status').innerText = "escribiendo...";
             const typingDiv = document.createElement('div');
             typingDiv.id = "typing-indicator";
-            // Usa clase nativa reveal-msg
             typingDiv.className = "flex items-end space-x-2 w-full max-w-[85%] reveal-msg";
             typingDiv.innerHTML = `
                 <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0 border border-gray-200 overflow-hidden">
@@ -502,7 +511,7 @@
                         <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center flex-shrink-0 z-10 border border-gray-200 overflow-hidden">
                             <img src="https://i.ibb.co/Xkv0wPQt/Whats-App-Image-2025-10-28-at-7-57-41-PM.jpg" alt="Beauty Code" class="w-full h-full object-cover">
                         </div>
-                        <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm text-[13.5px] text-[#1a1a1a] border border-gray-100 leading-relaxed">
+                        <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm text-[13.5px] text-[#1a1a1a] border border-gray-100 leading-relaxed text-justify">
                             ${text}
                         </div>
                     `;
@@ -534,7 +543,7 @@
             const msgDiv = document.createElement('div');
             msgDiv.className = "flex items-end justify-end space-x-2 w-full reveal-msg mt-2";
             msgDiv.innerHTML = `
-                <div class="bg-[#1a1a1a] p-4 rounded-2xl rounded-br-none shadow-md text-[13px] font-medium text-white max-w-[85%] leading-relaxed border border-gray-800">
+                <div class="bg-[#1a1a1a] p-4 rounded-2xl rounded-br-none shadow-md text-[13px] font-medium text-white max-w-[85%] leading-relaxed border border-gray-800 text-justify">
                     ${text}
                 </div>
             `;
@@ -665,7 +674,6 @@
             setTimeout(() => {
                 removeTypingIndicator();
                 if (reason === 'location') {
-                    // Mensaje con la palabra "hermosa" reincorporada
                     addGreetingMessage("Gracias por tu interés, hermosa. 🌸 Por la naturaleza de nuestros tratamientos clínicos, el protocolo de Medicina Regenerativa es exclusivamente presencial en nuestras instalaciones de CDMX y Área Metropolitana.", 0);
                     addGreetingMessage("Esperamos poder atenderte en el futuro si tienes oportunidad de visitarnos. ¡Que tengas un excelente día! ✨", 2500);
                 } 
